@@ -12,7 +12,7 @@ struct Poly{T}
     a::Vector{T}
     function Poly(a::AbstractVector{T}) where {T<:Number}
         if length(a) == 0
-            return new{T}([0])
+            return new{T}(zeros(T, 1))
         else
             return new{T}(a)
         end
@@ -24,4 +24,3 @@ Poly(n::Number) = Poly([n])
 
 end
 
-# include("tmp.jl")
