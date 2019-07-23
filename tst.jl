@@ -1,6 +1,7 @@
 include("tmp.jl")
 import .Tmp
 
+# using BenchmarkTools
 
 # println(Tmp.Poly(1)==Tmp.Poly(1)) # need to implement ==
 # println(Tmp.Poly(Int32(1)) == Tmp.Poly([1])) # prints true, and should not? it is ok, as 2 == 2.0
@@ -69,3 +70,20 @@ import .Tmp
 # println(p3) # modif / not anymore modif
 # println(p4)
 # println(p5)
+
+# a = [1,1,1]
+# b = [1,0,0,0]
+# b = [1,1,1,1]
+
+# println([a[i] + b[i] for i = 0:max(length(a),length(b))]) # no
+# println(a+b) # no
+# println(promote_shape(a,b))
+
+
+
+
+# p = Tmp.Poly(rand(Float64,5))
+# n = rand()
+# @benchmark Tmp.plus1($p,$n)
+# println()
+# @benchmark Tmp.plus2($p,$n)
