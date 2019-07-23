@@ -50,11 +50,12 @@ import .Tmp
 
 # pEmpty = Tmp.Poly(Vector{Int32}([]))
 # p0 = Tmp.Poly(1)
-# p1 = Tmp.Poly([0,1])
-# p2 = Tmp.Poly([0,0,1])
-# p3 = Tmp.Poly([1,1,1])
-# p4 = Tmp.Poly([1,1])
-# p5 = Tmp.Poly([0,0,0,0,2,1])
+# p1 = Tmp.Poly([0,1//1])
+# p2 = Tmp.Poly([1,-2,1])
+# p3 = Tmp.Poly([1,2,1])
+# p4 = Tmp.Poly([1,0,1])
+# p5 = Tmp.Poly([1,0,-1])
+p6 = Tmp.Poly([1])
 
 # println(pEmpty + 1 == Tmp.Poly(1))
 # println(p0 + 1 == Tmp.Poly(2))
@@ -87,3 +88,22 @@ import .Tmp
 # @benchmark Tmp.plus1($p,$n)
 # println()
 # @benchmark Tmp.plus2($p,$n)
+
+# a=[1,2,3,4,5]
+# b=[2,3,4,1]
+
+# println(Tmp.companion(a))
+# println(Tmp.companion(b))
+
+# println(Tmp.companion(p1))
+# println(Tmp.companion(p2))
+# println(Tmp.companion(p3))
+# println(Tmp.companion(p4))
+# println(Tmp.companion(p5))
+
+# println(Tmp.roots(p1))
+# println(Tmp.roots(p2))
+# println(Tmp.roots(p3))
+# println(Tmp.roots(p4))
+# println(Tmp.roots(p5))
+# println(typeof(Tmp.roots(p6)))

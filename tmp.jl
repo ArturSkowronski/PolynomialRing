@@ -2,9 +2,10 @@ module Tmp
 
 
 export Poly
-export peval
+export peval, roots
 
 import Base: ==, +, -, *, /
+import LinearAlgebra: diagm, eigvals
 
 
 # https://discourse.julialang.org/t/whats-the-correct-way-of-defining-struct-with-an-integer-parameter/23974
@@ -46,9 +47,28 @@ function peval(p::Poly{T}, n::S) where {T, S<:Number}
     return b
 end
 
+
+# https://en.wikipedia.org/wiki/Companion_matrix
+# Companion matrix
+# Leaky def as we assume a[end] != 0
+function companion(a::AbstractVector{T}) where {T<:Number}
+    U = promote_type(T, Float64)
+    len = length(a)
+    den = a[end]
+    comp = diagm(-1 => ones(U, len-2))
+    comp[:,len-1] = -a[1:end-1]/den
+    return comp
+end
+companion(p::Poly) = companion(p.coeffs)
+
+# https://www.mathworks.com/help/matlab/ref/roots.html#buo5imt-5
+function roots(p::Poly{T}) where {T<:Number}
+    (length(p.coeffs) == 1) ? (return Vector{Float64}([])) : (return eigvals(companion(p)))
+end
+
+
 # Standard functions overloading
 ==(p1::Poly, p2::Poly) = (p1.coeffs == p2.coeffs)
-
 # Question: should n == Poly(n) ?
 
 
