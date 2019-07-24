@@ -49,13 +49,30 @@ import .Tmp
 # println(Tmp.Poly{Int32}([1.0])) # no method for that
 
 # pEmpty = Tmp.Poly(Vector{Int32}([]))
-# p0 = Tmp.Poly(1)
-# p1 = Tmp.Poly([0,1//1])
-# p2 = Tmp.Poly([1,-2,1])
-# p3 = Tmp.Poly([1,2,1])
-# p4 = Tmp.Poly([1,0,1])
-# p5 = Tmp.Poly([1,0,-1])
+p0 = Tmp.Poly(1)
+p1 = Tmp.Poly([0,1//1])
+p2 = Tmp.Poly([1,-2,1])
+p3 = Tmp.Poly([1,2,1])
+p4 = Tmp.Poly([0,0,1])
+p5 = Tmp.Poly([1,0,-1])
 p6 = Tmp.Poly([1])
+p7 = Tmp.Poly([3,2,6,7,5])
+p8 = Tmp.Poly([1,2,3])
+
+# println(p0*p3)
+# println(p0*p2)
+# println(p4*p3)
+# println(p4*p7)
+# println(p7*p3)
+
+# @code_warntype p4*p3
+
+# println(p3)
+# println(p4)
+# p4*p3
+# println(p3)
+# println(p4)
+
 
 # println(pEmpty + 1 == Tmp.Poly(1))
 # println(p0 + 1 == Tmp.Poly(2))

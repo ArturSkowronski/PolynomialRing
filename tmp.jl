@@ -4,7 +4,7 @@ module Tmp
 export Poly
 export peval, roots
 
-import Base: ==, +, -, *, /
+import Base: ==, +, -, *, /, isapprox
 import LinearAlgebra: diagm, eigvals
 
 
@@ -20,7 +20,7 @@ struct Poly{T}
             return new{T}(zeros(T, 1))
         else
             last_nonz = findlast(!iszero, coeffs)
-            return new{T}(last_nonz == nothing ? [coeffs[1]] : coeffs[1:last_nonz])
+            return new{T}(last_nonz === nothing ? [coeffs[1]] : coeffs[1:last_nonz])
         end
     end
 end
@@ -31,7 +31,7 @@ Poly(n::Number) = Poly([n])  # convert number into constant poly
 # Or maybe it should convert Vector to the type of Poly?
 function Poly{T}(x::AbstractVector{S}) where {T, S}
     U = promote_type(T, S)
-    return Poly(convert(Vector{U}, x))
+    Poly(convert(Vector{U}, x))
 end
 
 # range object of form: start:step:stop
@@ -44,7 +44,7 @@ function peval(p::Poly{T}, n::S) where {T, S<:Number}
     for i in (len-1):-1:1
         b = p.coeffs[i] + b*n
     end
-    return b
+    b
 end
 
 
@@ -54,10 +54,10 @@ end
 function companion(a::AbstractVector{T}) where {T<:Number}
     U = promote_type(T, Float64)
     len = length(a)
-    den = a[end]
+    den = a[end]  # possibly need of copy()
     comp = diagm(-1 => ones(U, len-2))
     comp[:,len-1] = -a[1:end-1]/den
-    return comp
+    comp
 end
 companion(p::Poly) = companion(p.coeffs)
 
@@ -67,20 +67,19 @@ function roots(p::Poly{T}) where {T<:Number}
 end
 
 
-# Standard functions overloading
+# Standard comparison & arithmetic functions overloading
 ==(p1::Poly, p2::Poly) = (p1.coeffs == p2.coeffs)
-# Question: should n == Poly(n) ?
-
+==(p::Poly, n::Number) = (p.coeffs == [n])
+==(n::Number, p::Poly) = ==(p, n)
+isapprox(p1::Poly, p2::Poly) = isapprox(p1.coeffs,p2.coeffs)
 
 function +(p::Poly{T}, n::S) where {T, S<:Number}
     U = promote_type(T, S)
     coeffs1 = T==S ? copy(p.coeffs) : copy(convert(Vector{U}, p.coeffs))
     coeffs1[1] += n
-    return Poly(coeffs1)
+    Poly(coeffs1)
 end
-
 +(n::Number, p::Poly)= +(p, n)
-
 function +(p1::Poly{T}, p2::Poly{S}) where {T, S}
     U = promote_type(T, S)
     len = max(length(p1.coeffs), length(p2.coeffs))
@@ -91,7 +90,7 @@ function +(p1::Poly{T}, p2::Poly{S}) where {T, S}
     for i in 1:length(p2.coeffs)
         tmp[i] += p2.coeffs[i]
     end
-    return Poly(tmp)
+    Poly(tmp)
 end
 
 -(p::Poly) = Poly(-p.coeffs)
@@ -103,5 +102,17 @@ end
 
 *(p::Poly, n::Number) = Poly(p.coeffs * n)
 *(n::Number, p::Poly) = *(p, n)
+function *(p1::Poly{T}, p2::Poly{S}) where {T, S}
+    U = promote_type(T, S)
+    m = length(p1.coeffs)
+    n = length(p2.coeffs)
+    cfs = zeros(U, m+n-1)
+    for i = 1:m
+        for j = 1:n
+            cfs[i+j-1] += p1.coeffs[i] * p2.coeffs[j]
+        end
+    end
+    Poly(cfs)
+end
 
 end

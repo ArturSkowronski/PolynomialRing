@@ -11,7 +11,7 @@ struct Poly{T}
             return new{T}(zeros(T, 1))
         else
             last_nonz = findlast(!iszero, coeffs)
-            return new{T}(last_nonz == nothing ? coeffs[1] : coeffs[1:last_nonz])
+            return new{T}(last_nonz === nothing ? coeffs[1] : coeffs[1:last_nonz])
         end
     end
 end
