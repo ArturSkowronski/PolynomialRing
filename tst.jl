@@ -127,10 +127,10 @@ import .Tmp
 # println(Tmp.roots(p3))
 # println(Tmp.roots(p4))
 # println(Tmp.roots(p5))
-# println(typeof(Tmp.roots(p6)))
+# # println(typeof(Tmp.roots(p6)))
 
-p4 = Tmp.Poly([1.0, 1])
-p5 = Tmp.Poly([0,0,0,0,2,1])
-p6 = Tmp.Poly([1,2,1])
+# p4 = Tmp.Poly([1.0, 1])
+# p5 = Tmp.Poly([0,0,0,0,2,1])
+# p6 = Tmp.Poly([1,2,1])
 
-divrem(p6,p4)
+# divrem(p6,p4)

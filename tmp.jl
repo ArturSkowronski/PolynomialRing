@@ -70,7 +70,7 @@ isapprox(p1::Poly, p2::Poly) = isapprox(p1.coeffs,p2.coeffs)
 
 function +(p::Poly{T}, n::S) where {T, S<:Number}
     U = promote_type(T, S)
-    coeffs1 = T==S ? copy(p.coeffs) : copy(convert(Vector{U}, p.coeffs))
+    coeffs1 = copy(convert(Vector{U}, p.coeffs))
     coeffs1[1] += n
     Poly(coeffs1)
 end
