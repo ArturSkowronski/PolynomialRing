@@ -1,6 +1,6 @@
-include("tmp.jl")
+include("polyRing.jl")
 
-using .Tmp
+using .PolyRing
 using Test
 
 pEmpty = Poly(Vector{Int32}([]))

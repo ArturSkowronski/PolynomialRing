@@ -1,6 +1,6 @@
 # Remarks
 
-## `eval` & `copy`
+## `convert` & `copy`
 
 This
 
@@ -100,14 +100,14 @@ BenchmarkTools.Trial:
   evals/sample:     977
 ```
 
-## Rational arrays
+## Rational arrays - `convert` & `copy` again
 
 Rational arrays behave in a very weird way: for some reason some overwriting takes place while adding such arrays (while adding polynomials), thus there is need for additional `copy` after `convert`:
 
 ```julia
 function +(p::Poly{T}, n::S) where {T, S<:Number}
     U = promote_type(T, S)
-    coeffs1 = T==S ? copy(p.coeffs) : copy(convert(Vector{U}, p.coeffs))
+    coeffs1 = copy(convert(Vector{U}, p.coeffs))
     coeffs1[1] += n
     return Poly(coeffs1)
 end
@@ -122,6 +122,10 @@ function +(p::Poly{T}, n::S) where {T, S<:Number}
     return Poly(coeffs1)
 end
 ```
+
+*Why is this so?* There is an **issue** on Julia github:
+
+[**convert can lead to unexpected aliasing #12441**](https://github.com/JuliaLang/julia/issues/12441)
 
 ## To implement or not to implement
 
