@@ -118,22 +118,21 @@ function divrem(num::Poly{T}, den::Poly{S}) where {T, S}
         den.coeffs == [0] ? throw(DivideError()) : (return /(num, den.coeffs[1]), Poly(0))
     end
 
-    U = promote_type(T, S)
+    U = typeof(one(T)/one(S))
     n = length(num.coeffs)
     deg = n-d
     if deg <0
         return Poly{U}([0]), Poly{U}(num.coeffs)
     end
 
-    out = convert(Vector{U}, num.coeffs)
+    out = copy(convert(Vector{U}, num.coeffs))
     norm = den.coeffs[end]
     for i = n:-1:d
         out[i] /= norm
         coef = out[i]
         if coef != 0
             for j = 1:d-1
-                out[i-(d-j)+1] -= den.coeffs[j]*coef
-                println(out)
+                out[i-(d-j)] -= den.coeffs[j]*coef
             end
         end
     end

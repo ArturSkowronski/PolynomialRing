@@ -14,7 +14,7 @@ p5 = Poly([0,0,0,0,2,1])
 p6 = Poly([1,2,1])
 p7 = Poly([1,-2,1])
 p8 = Poly([3,2,6,7,5])
-p9 = Poly([1,2,3])
+p9 = Poly([1,2.0,3])
 
 @testset "defining polynomials" begin
     @test Poly(0) == Poly([0])
@@ -165,12 +165,43 @@ end
     @test roots(p7) ≈ [1,1]
 end
 @testset "poly divrem" begin
-    # @test divrem(p1, p0) == (Poly([0,1]), Poly(0))
-    # @test divrem(p4, p0) == (Poly([1, 1]), Poly(0))
-    # @test divrem(p8, p0) == (Poly([3,2,6,7,5]), Poly(0))
-    # @test divrem(p6, p1) == (Poly([2,1]), Poly(1))
+    @test divrem(p1, p0) == (Poly([0,1]), Poly(0))
+    @test divrem(p4, p0) == (Poly([1, 1]), Poly(0))
+    @test divrem(p8, p0) == (Poly([3,2,6,7,5]), Poly(0))
+    @test divrem(p6, p1) == (Poly([2,1]), Poly(1))
     @test divrem(p6, p4) == (Poly([1,1]), Poly(0))
-    # @test divrem(p8, p1) == (Poly([2,6,7,5]), Poly(3))
+    @test divrem(p8, p1) == (Poly([2,6,7,5]), Poly(3))
+    @test divrem(p9, p1) == (Poly([2,3]), Poly(1))
+    @test divrem(p4, p5) == (Poly(0), Poly([1,1]))
+    @test_throws DivideError divrem(p4, p00)
+    @test divrem(p6, p7) == (Poly(1), Poly([0,4]))
+    @test divrem(p9, p4) == (Poly([-1,3]), Poly(2))
+end
+@testset "poly div" begin
+    @test div(p1, p0) == Poly([0,1])
+    @test div(p4, p0) == Poly([1, 1])
+    @test div(p8, p0) == Poly([3,2,6,7,5])
+    @test div(p6, p1) == Poly([2,1])
+    @test div(p6, p4) == Poly([1,1])
+    @test div(p8, p1) == Poly([2,6,7,5])
+    @test div(p9, p1) == Poly([2,3])
+    @test div(p4, p5) == Poly(0)
+    @test_throws DivideError div(p4, p00)
+    @test div(p6, p7) == Poly(1)
+    @test div(p9, p4) == Poly([-1,3])
+end
+@testset "poly rem" begin
+    @test rem(p1, p0) == Poly(0)
+    @test rem(p4, p0) == Poly(0)
+    @test rem(p8, p0) == Poly(0)
+    @test rem(p6, p1) == Poly(1)
+    @test rem(p6, p4) == Poly(0)
+    @test rem(p8, p1) == Poly(3)
+    @test rem(p9, p1) == Poly(1)
+    @test rem(p4, p5) == Poly([1,1])
+    @test_throws DivideError rem(p4, p00)
+    @test rem(p6, p7) == Poly([0,4])
+    @test rem(p9, p4) == Poly(2)
 end
 
 @testset "check nothing is overwritten" begin
