@@ -49,15 +49,19 @@ import .Tmp
 # println(Tmp.Poly{Int32}([1.0])) # no method for that
 
 # pEmpty = Tmp.Poly(Vector{Int32}([]))
-p0 = Tmp.Poly(1)
-p1 = Tmp.Poly([0,1//1])
-p2 = Tmp.Poly([1,-2,1])
-p3 = Tmp.Poly([1,2,1])
-p4 = Tmp.Poly([0,0,1])
-p5 = Tmp.Poly([1,0,-1])
-p6 = Tmp.Poly([1])
-p7 = Tmp.Poly([3,2,6,7,5])
-p8 = Tmp.Poly([1,2,3])
+# p0 = Tmp.Poly(1)
+# p1 = Tmp.Poly([0,1//1])
+# p2 = Tmp.Poly([1,-2,1])
+# p3 = Tmp.Poly([1,2,1])
+# p4 = Tmp.Poly([0,0,1])
+# p5 = Tmp.Poly([1,0,-1])
+# p6 = Tmp.Poly([1])
+# p7 = Tmp.Poly([3,2,6,7,5])
+# p8 = Tmp.Poly([1,2,3])
+
+# # println(divrem(p4,p1))
+# # println(divrem(p5,p1))
+# println(divrem(p8,p0))
 
 # println(p0*p3)
 # println(p0*p2)
@@ -124,3 +128,9 @@ p8 = Tmp.Poly([1,2,3])
 # println(Tmp.roots(p4))
 # println(Tmp.roots(p5))
 # println(typeof(Tmp.roots(p6)))
+
+p4 = Tmp.Poly([1.0, 1])
+p5 = Tmp.Poly([0,0,0,0,2,1])
+p6 = Tmp.Poly([1,2,1])
+
+divrem(p6,p4)

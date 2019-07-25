@@ -5,14 +5,11 @@ export Poly
 export peval, roots
 
 import Base: ==, +, -, *, /, isapprox
+import Base: divrem, div, rem
 import LinearAlgebra: diagm, eigvals
 
 
 # https://discourse.julialang.org/t/whats-the-correct-way-of-defining-struct-with-an-integer-parameter/23974
-
-# automatic conversion of vector takes place
-# passing empty vector yields error as there is a need to specify Type<:Number
-
 struct Poly{T}
     coeffs::Vector{T}
     function Poly(coeffs::AbstractVector{T}) where {T<:Number}
@@ -33,8 +30,6 @@ function Poly{T}(x::AbstractVector{S}) where {T, S}
     U = promote_type(T, S)
     Poly(convert(Vector{U}, x))
 end
-
-# range object of form: start:step:stop
 
 function peval(p::Poly{T}, n::S) where {T, S<:Number}
     # What should be returned if we pass empty Poly??
@@ -114,5 +109,38 @@ function *(p1::Poly{T}, p2::Poly{S}) where {T, S}
     end
     Poly(cfs)
 end
+
+# Dividing polynomials
+# https://en.wikipedia.org/wiki/Synthetic_division
+function divrem(num::Poly{T}, den::Poly{S}) where {T, S}
+    d = length(den.coeffs)
+    if d == 1
+        den.coeffs == [0] ? throw(DivideError()) : (return /(num, den.coeffs[1]), Poly(0))
+    end
+
+    U = promote_type(T, S)
+    n = length(num.coeffs)
+    deg = n-d
+    if deg <0
+        return Poly{U}([0]), Poly{U}(num.coeffs)
+    end
+
+    out = convert(Vector{U}, num.coeffs)
+    norm = den.coeffs[end]
+    for i = n:-1:d
+        out[i] /= norm
+        coef = out[i]
+        if coef != 0
+            for j = 1:d-1
+                out[i-(d-j)+1] -= den.coeffs[j]*coef
+                println(out)
+            end
+        end
+    end
+    return Poly(out[d:end]), Poly(out[1:d-1])
+end
+
+div(num::Poly, den::Poly) = divrem(num, den)[1]
+rem(num::Poly, den::Poly) = divrem(num, den)[2]
 
 end

@@ -102,7 +102,7 @@ BenchmarkTools.Trial:
 
 ## Rational arrays
 
-Rational arrays behave in a very weird way: for some reason some overwriting takes place while adding such arrays (while adding polynomials), thus there is need for additional `copy`:
+Rational arrays behave in a very weird way: for some reason some overwriting takes place while adding such arrays (while adding polynomials), thus there is need for additional `copy` after `convert`:
 
 ```julia
 function +(p::Poly{T}, n::S) where {T, S<:Number}
@@ -111,4 +111,34 @@ function +(p::Poly{T}, n::S) where {T, S<:Number}
     coeffs1[1] += n
     return Poly(coeffs1)
 end
+```
+
+This behaves weird when we have rational poly:
+```julia
+function +(p::Poly{T}, n::S) where {T, S<:Number}
+    U = promote_type(T, S)
+    coeffs1 = T==S ? copy(p.coeffs) : convert(Vector{U}, p.coeffs)
+    coeffs1[1] += n
+    return Poly(coeffs1)
+end
+```
+
+## To implement or not to implement
+
+Shall this
+
+```julia
+==(p::Poly, n::Number) = (p.coeffs == [n])
+==(n::Number, p::Poly) = ==(p, n)
+```
+
+be implemented or not?
+
+It should, as this is implemented:
+
+```julia
+function +(p::Poly{T}, n::S) where {T, S<:Number}
+    [...]
+end
++(n::Number, p::Poly)= +(p, n)
 ```

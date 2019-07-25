@@ -164,6 +164,14 @@ end
     @test roots(p6) ≈ [-1,-1]
     @test roots(p7) ≈ [1,1]
 end
+@testset "poly divrem" begin
+    # @test divrem(p1, p0) == (Poly([0,1]), Poly(0))
+    # @test divrem(p4, p0) == (Poly([1, 1]), Poly(0))
+    # @test divrem(p8, p0) == (Poly([3,2,6,7,5]), Poly(0))
+    # @test divrem(p6, p1) == (Poly([2,1]), Poly(1))
+    @test divrem(p6, p4) == (Poly([1,1]), Poly(0))
+    # @test divrem(p8, p1) == (Poly([2,6,7,5]), Poly(3))
+end
 
 @testset "check nothing is overwritten" begin
     @test p00 == Poly(0)
