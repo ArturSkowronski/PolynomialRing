@@ -23,8 +23,10 @@ Poly{Rational{Int64}}(Rational{Int64}[1//1, 2//1, 1//1])
 
 ### peval{p::Poly, n::Number)
 
+Works also in a shortend notation `(p::Poly)(n::Number)
+
 ```julia
-julia> Poly([1,2,1])
+julia> p = Poly([1,2,1])
 Poly{Int64}([1, 2, 1])
 
 julia> peval(p, 1)
@@ -32,6 +34,12 @@ julia> peval(p, 1)
 
 julia> peval(p, -1//1)
 0//1
+
+julia> q = Poly([0,0,1])
+Poly{Int64}([0, 0, 1])
+
+julia> q(2)
+4
 ```
 
 ### roots(p::Poly)

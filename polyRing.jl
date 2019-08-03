@@ -4,7 +4,7 @@ module PolyRing
 export Poly
 export peval, roots
 
-import Base: ==, +, -, *, /, isapprox
+import Base: ==, +, -, *, /, ^, isapprox
 import Base: divrem, div, rem
 import LinearAlgebra: diagm, eigvals
 
@@ -78,6 +78,7 @@ function peval(p::Poly{T}, n::S) where {T, S<:Number}
     end
     b
 end
+(p::Poly)(n) = peval(p, n)
 
 
 # https://en.wikipedia.org/wiki/Companion_matrix
@@ -183,6 +184,9 @@ function *(p1::Poly{T}, p2::Poly{S}) where {T, S}
     Poly(cfs)
 end
 
+# https://stackoverflow.com/questions/49889476/raising-a-matrix-to-a-power-in-julia
+^(p::Poly, n::Integer) = Base.power_by_squaring(p, n)
+
 
 # Based on:
 # https://en.wikipedia.org/wiki/Synthetic_division
@@ -193,12 +197,16 @@ function divrem(num::Poly{T}, den::Poly{S}) where {T, S}
     end
 
     U = typeof(one(T)/one(S))
+    # U = promote_type(T, S)
+    # U = Core.Compiler.return_type(div, Tuple{S, T})
     n = length(num.coeffs)
     deg = n-d
     if deg <0
+        # return Poly([0]), Poly(num.coeffs)
         return Poly{U}([0]), Poly{U}(num.coeffs)
     end
 
+    # out = copy(num.coeffs)
     out = copy(convert(Vector{U}, num.coeffs))
     norm = den.coeffs[end]
     for i = n:-1:d
@@ -215,5 +223,9 @@ end
 
 div(num::Poly, den::Poly) = divrem(num, den)[1]
 rem(num::Poly, den::Poly) = divrem(num, den)[2]
+
+
+# experiments
+include("tmp.jl")
 
 end

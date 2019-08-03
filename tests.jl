@@ -1,5 +1,6 @@
 include("polyRing.jl")
 
+
 using .PolyRing
 using Test
 
@@ -15,6 +16,8 @@ p6 = Poly([1,2,1])
 p7 = Poly([1,-2,1])
 p8 = Poly([3,2,6,7,5])
 p9 = Poly([1,2.0,3])
+p10 = Poly([1,-3,2])
+p11 = Poly([-2,2])
 
 @testset "defining polynomials" begin
     @test Poly(0) == Poly([0])
@@ -29,6 +32,7 @@ end
     @test peval(p0, 0) == 1
     @test peval(p0, 2) == 1
     @test peval(p1, 0) == 0
+    @test p1(0) == 0
     @test peval(p1, 1//1) == 1
     @test peval(p1, 2) == 2
     @test peval(p1, 3) == 3
@@ -36,18 +40,22 @@ end
     @test peval(p2, 1) == 1
     @test peval(p2, 2) == 4
     @test peval(p2, √2) ≈ 2
+    @test p2(√2) ≈ 2
     @test peval(p2, 3.0) == 9
     @test peval(p3, 0) == 1
     @test peval(p3, 1.0) == 3
     @test peval(p3, 2) == 7
     @test peval(p3, 3) == 13
+    @test p3(3) == 13
     @test peval(p4, -1) == 0
     @test peval(p5, -1) == 1
     @test peval(p5, 1) == 3
     @test peval(p5, 2) == 64
+    @test p5(2) ==64
     @test peval(p5, -2.0) == 0
     @test peval(pEmpty, -1) == 0
     @test peval(pEmpty, 4) == 0
+    @test pEmpty(4) == 0
     @test peval(pEmpty, 2//4) == 0
 end
 @testset "polynomial addition" begin
@@ -143,6 +151,11 @@ end
         @test p3*3.5 == Poly([3.5,3.5,3.5])
         @test p4 * 2//1 == Poly([2, 2])
     end
+    @testset "raise poly to power" begin
+        @test p1^2 == Poly([0,0,1])
+        @test p1^5 == Poly([0,0,0,0,0,1])
+        @test p4^2 == Poly([1,2,1])
+    end
 end
 @testset "poly / numb" begin
     @test p00/5 == Poly(0)
@@ -168,6 +181,10 @@ end
     @test divrem(p1, p0) == (Poly([0,1]), Poly(0))
     @test divrem(p4, p0) == (Poly([1, 1]), Poly(0))
     @test divrem(p8, p0) == (Poly([3,2,6,7,5]), Poly(0))
+    @test divrem(p8, 2p0) == (Poly([3/2,2/2,6/2,7/2,5/2]), Poly(0))
+    @test divrem(p8, 1.1p0) == (Poly([3/1.1,2/1.1,6/1.1,7/1.1,5/1.1]), Poly(0))
+    @test divrem(p8, im*p0) == (Poly([3/im,2/im,6/im,7/im,5/im]), Poly(0))
+    @test divrem(p8, 2//1 * p0) == (Poly([3/2,2/2,6/2,7/2,5/2]), Poly(0))
     @test divrem(p6, p1) == (Poly([2,1]), Poly(1))
     @test divrem(p6, p4) == (Poly([1,1]), Poly(0))
     @test divrem(p8, p1) == (Poly([2,6,7,5]), Poly(3))
@@ -176,6 +193,7 @@ end
     @test_throws DivideError divrem(p4, p00)
     @test divrem(p6, p7) == (Poly(1), Poly([0,4]))
     @test divrem(p9, p4) == (Poly([-1,3]), Poly(2))
+    @test divrem(p10, p11) == (Poly([-0.5, 1]), Poly(0))
 end
 @testset "poly div" begin
     @test div(p1, p0) == Poly([0,1])
@@ -218,3 +236,4 @@ end
     @test p8 == Poly([3,2,6,7,5])
     @test p9 == Poly([1,2,3])
 end
+
