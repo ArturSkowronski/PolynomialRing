@@ -18,6 +18,9 @@ p8 = Poly([3,2,6,7,5])
 p9 = Poly([1,2.0,3])
 p10 = Poly([1,-3,2])
 p11 = Poly([-2,2])
+p12 = Poly([im])
+p13 = Poly([0,im])
+p14 = Poly([1,1,2im])
 
 @testset "defining polynomials" begin
     @test Poly(0) == Poly([0])
@@ -57,6 +60,13 @@ end
     @test peval(pEmpty, 4) == 0
     @test pEmpty(4) == 0
     @test peval(pEmpty, 2//4) == 0
+    @test p13(im) == -1
+    @test p14(1) == 2 + 2im
+    @test p14(im) == 1 - im
+    @test p1(1) isa typeof(1//1)
+    @test p4(0) isa typeof(1.0)
+    @test p4(im) isa typeof(2.0im)
+
 end
 @testset "polynomial addition" begin
     @testset "poly + number" begin
@@ -67,6 +77,9 @@ end
         @test p3 + 1 == Poly([2,1,1])
         @test p4 + 24.1 == Poly([25.1, 1])
         @test p5 + 3//4 == Poly([3//4, 0,0,0,2,1])
+        @test (p0 + im) isa Poly{Complex{typeof(1)}}
+        @test (p0 + 4.6) isa Poly{typeof(1.0)}
+        @test (p0 + 1) isa Poly{typeof(1)}
     end
     @testset "number + poly" begin
         @test 1 + pEmpty == Poly(1)
@@ -84,6 +97,9 @@ end
         @test p2+p3 == Poly([1,1,2])
         @test p3+p4 == Poly([2,2,1])
         @test p4+p5 == Poly([1,1,0,0,2,1])
+        @test (p0+p1) isa Poly{Rational{typeof(1)}}
+        @test (p1+p4) isa Poly{typeof(1.0)}
+        @test (p12+p1) isa Poly{Complex{typeof(1//1)}}
     end
 end
 @testset "polynomial subtraction" begin
@@ -106,7 +122,7 @@ end
         @test p4 - 24.1 == Poly([-23.1, 1])
         @test p5 - 3//4 == Poly([-3//4, 0,0,0,2,1])
     end
-    @testset "number + poly" begin
+    @testset "number - poly" begin
         @test 1 - pEmpty == Poly(1)
         @test 1 - p0 == Poly(0)
         @test 2 - p1 == Poly([2,-1])
@@ -115,7 +131,7 @@ end
         @test 24.1 - p4 == Poly([23.1, -1])
         @test 3//4 - p5 == Poly([3//4, 0,0,0,-2,-1])
     end
-    @testset "poly + poly" begin
+    @testset "poly - poly" begin
         @test pEmpty-p0 == Poly(-1)
         @test -p0-p1 == Poly([-1,-1])
         @test p1-p2 == Poly([0,1,-1])
@@ -134,6 +150,9 @@ end
         @test p6*p7 == Poly([1,0,-2,0,1])
         @test p7*p6 == Poly([1,0,-2,0,1])
         @test p6*p9 == Poly([1,4,8,8,3])
+        @test p12*p12 == Poly(-1)
+        @test p1*p4 isa Poly{typeof(1.0)}
+        @test p1*p12 isa Poly{Complex{typeof(1//1)}}
     end
     @testset "numb * poly" begin
         @test 5*p00 == Poly(0)
@@ -142,6 +161,7 @@ end
         @test 3//4 * p2 == Poly([0,0, 0.75])
         @test 3.5*p3 == Poly([3.5,3.5,3.5])
         @test 2//1 * p4 == Poly([2, 2])
+        @test p6 * im isa Poly{Complex{typeof(1)}}
     end
     @testset "poly * numb" begin
         @test p00*5 == Poly(0)
@@ -150,11 +170,13 @@ end
         @test p2* 3//4 == Poly([0,0, 0.75])
         @test p3*3.5 == Poly([3.5,3.5,3.5])
         @test p4 * 2//1 == Poly([2, 2])
+        @test p12 * im == Poly(-1)
     end
     @testset "raise poly to power" begin
         @test p1^2 == Poly([0,0,1])
         @test p1^5 == Poly([0,0,0,0,0,1])
         @test p4^2 == Poly([1,2,1])
+        @test p12^2 == Poly(-1)
     end
 end
 @testset "poly / numb" begin

@@ -42,7 +42,7 @@ struct Poly{T}
     end
 end
 Poly(n::Number) = Poly([n])  # numbers are constant polynomials
-
+Poly(n::Vector{Complex{Bool}}) = Poly(1*n)
 # This is consistent with with the behaviour of arrays, e.g. Int64[1.0] = Int64[1]
 function Poly{T}(x::AbstractVector{S}) where {T, S}
     Poly(convert(Vector{T}, x))
