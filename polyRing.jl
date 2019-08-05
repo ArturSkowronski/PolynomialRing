@@ -2,8 +2,10 @@ module PolyRing
 
 
 export Poly
-export peval, roots
+export peval, roots, degree
 
+import Base: length, zero, one
+import Base: iterate, getindex, firstindex, lastindex
 import Base: ==, +, -, *, /, ^, isapprox
 import Base: divrem, div, rem
 import LinearAlgebra: diagm, eigvals
@@ -48,7 +50,32 @@ end
 
 #################################################
 ##
+length(p::Poly) = length(p.coeffs)
+
+zero(p::Poly{T}) where {T} = Poly(T[])  # iszero works now
+one(p::Poly{T}) where {T} = Poly([one(T)])  # isone works now
+
+
+iterate(p::Poly) = iterate(p.coeffs)
+iterate(p::Poly, state) = iterate(p.coeffs, state)
+
+## Indexing
+getindex(p::Poly{T}, i::Int) where {T} = (i ≥ length(p) ? zero(T) : p.coeffs[i+1])
+# setindex!(p::Poly{T}, v::Number, i::Int)  # more then that
+firstindex(p::Poly) = 0
+lastindex(p::Poly) = degree(p)
+
+
+#################################################
+##
 ## Useful functions
+
+"""
+    degree(p::Poly)
+Return the degree of the polynomial `p` (the highest exponent with nonzero coefficient.
+The degree of the zero polynomial is -1.
+"""
+degree(p::Poly) = iszero(p) ? -1 : length(p)-1
 
 # evaluation of poly
 """
@@ -62,15 +89,14 @@ Evaluate a polynomial `p` at point `x` (via Horner's method).
 julia> Poly([1,2,1])
 Poly{Int64}([1, 2, 1])
 
-julia> peval(p, 1)
-4
+julia> peval(p, 1)4
 
 julia> peval(p, -1//1)
 0//1
 ```
 """
 function peval(p::Poly{T}, n::S) where {T, S<:Number}
-    len = length(p.coeffs)
+    len = length(p)
     U = promote_type(T, S)
     b = convert(U, p.coeffs[end])
     for i in (len-1):-1:1
@@ -126,7 +152,7 @@ julia> roots(q)
 ```
 """
 function roots(p::Poly{T}) where {T<:Number}
-    (length(p.coeffs) == 1) ? (return Vector{Float64}([])) : (return eigvals(companion(p)))
+    (length(p) == 1) ? (return Vector{Float64}([])) : (return eigvals(companion(p)))
 end
 
 #################################################
@@ -148,12 +174,12 @@ end
 
 function +(p1::Poly{T}, p2::Poly{S}) where {T, S}
     U = promote_type(T, S)
-    len = max(length(p1.coeffs), length(p2.coeffs))
+    len = max(length(p1), length(p2))
     tmp = zeros(U, len)
-    for i in 1:length(p1.coeffs)
+    for i in 1:length(p1)
         tmp[i] += p1.coeffs[i]
     end
-    for i in 1:length(p2.coeffs)
+    for i in 1:length(p2)
         tmp[i] += p2.coeffs[i]
     end
     Poly(tmp)
@@ -173,8 +199,8 @@ end
 *(n::Number, p::Poly) = *(p, n)
 function *(p1::Poly{T}, p2::Poly{S}) where {T, S}
     U = promote_type(T, S)
-    m = length(p1.coeffs)
-    n = length(p2.coeffs)
+    m = length(p1)
+    n = length(p2)
     cfs = zeros(U, m+n-1)
     for i = 1:m
         for j = 1:n
@@ -191,7 +217,7 @@ end
 # Based on:
 # https://en.wikipedia.org/wiki/Synthetic_division
 function divrem(num::Poly{T}, den::Poly{S}) where {T, S}
-    d = length(den.coeffs)
+    d = length(den)
     if d == 1
         den.coeffs == [0] ? throw(DivideError()) : (return /(num, den.coeffs[1]), Poly(0))
     end
@@ -199,7 +225,7 @@ function divrem(num::Poly{T}, den::Poly{S}) where {T, S}
     U = typeof(one(T)/one(S))
     # U = promote_type(T, S)
     # U = Core.Compiler.return_type(div, Tuple{S, T})
-    n = length(num.coeffs)
+    n = length(num)
     deg = n-d
     if deg <0
         # return Poly([0]), Poly(num.coeffs)
@@ -227,5 +253,6 @@ rem(num::Poly, den::Poly) = divrem(num, den)[2]
 
 # experiments
 include("tmp.jl")
+include("polyPrint.jl")
 
 end

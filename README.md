@@ -23,7 +23,7 @@ Poly{Rational{Int64}}(Rational{Int64}[1//1, 2//1, 1//1])
 
 ### peval{p::Poly, n::Number)
 
-Works also in a shortend notation `(p::Poly)(n::Number)
+Works also in a shortend notation `(p::Poly)(n::Number)`
 
 ```julia
 julia> p = Poly([1,2,1])
@@ -60,4 +60,20 @@ julia> roots(q)
 2-element Array{Complex{Float64},1}:
  -0.49999999999999994 + 0.8660254037844386im
  -0.49999999999999994 - 0.8660254037844386im
+```
+
+### degree(p::Poly)
+
+```julia
+julia> p = Poly([1,2,1])
+Poly{Int64}([1, 2, 1])
+
+julia> degree(p)
+2
+
+julia> q = Poly([0,0,0,0,1])
+Poly{Int64}([0, 0, 0, 0, 1])
+
+julia> degree(q)
+4
 ```
