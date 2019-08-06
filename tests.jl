@@ -162,6 +162,8 @@ end
         @test 3.5*p3 == Poly([3.5,3.5,3.5])
         @test 2//1 * p4 == Poly([2, 2])
         @test p6 * im isa Poly{Complex{typeof(1)}}
+        @test 2//1 * p4 isa Poly{typeof(1.0)}
+        @test p3*2 isa Poly{typeof(1)}
     end
     @testset "poly * numb" begin
         @test p00*5 == Poly(0)

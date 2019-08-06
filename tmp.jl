@@ -6,7 +6,7 @@ function divrem1(num::Poly{T}, den::Poly{S}) where {T, S}
         den.coeffs == [0] ? throw(DivideError()) : (return /(num, den.coeffs[1]), Poly(0))
     end
 
-    # U = typeof(one(T)/one(S))
+    U = typeof(div(one(T),one(S)))
     # U = promote_type(T, S)
     # U = Core.Compiler.return_type(div, Tuple{S, T})
     n = length(num.coeffs)

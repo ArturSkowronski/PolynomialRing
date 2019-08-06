@@ -56,11 +56,11 @@ zero(p::Poly{T}) where {T} = Poly(T[])  # iszero works now
 one(p::Poly{T}) where {T} = Poly([one(T)])  # isone works now
 
 
-iterate(p::Poly) = iterate(p.coeffs)
-iterate(p::Poly, state) = iterate(p.coeffs, state)
+iterate(p::Poly) = (p[0], 1)
+iterate(p::Poly, state) = state <= degree(p) ? (p[state], state+1) : nothing
 
 ## Indexing
-getindex(p::Poly{T}, i::Int) where {T} = (i ≥ length(p) ? zero(T) : p.coeffs[i+1])
+getindex(p::Poly{T}, i::Int) where {T} = (i > degree(p) ? zero(T) : p.coeffs[i+1])
 # setindex!(p::Poly{T}, v::Number, i::Int)  # more then that
 firstindex(p::Poly) = 0
 lastindex(p::Poly) = degree(p)

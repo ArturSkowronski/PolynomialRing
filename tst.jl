@@ -7,7 +7,7 @@ using Test
 pEmpty = Poly(Vector{Int32}([]))
 p00 = Poly(0)
 p0 = Poly(1)
-p1 = Poly([0,1//1])  # passing rational here yields weird behaviour (not anymore)
+p1 = Poly([0,1//1])
 p2 = Poly([0,0, 1])
 p3 = Poly([1,1,1])
 p4 = Poly([1.0, 1])
