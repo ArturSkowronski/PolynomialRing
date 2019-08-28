@@ -20,7 +20,7 @@ function divrem1(num::Poly{T}, den::Poly{S}) where {T, S}
     # out = copy(convert(Vector{U}, num.coeffs))
     norm = den.coeffs[end]
     for i = n:-1:d
-        out[i] /= norm
+        out[i] = div(out[i], norm)
         coef = out[i]
         if coef != 0
             for j = 1:d-1
