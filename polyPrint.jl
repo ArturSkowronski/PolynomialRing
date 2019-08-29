@@ -5,6 +5,54 @@
 # import Base: show
 export polyPrint
 
+
+# how does a monomial look:
+# sign  coeff  "*"  "x"  "^"  exponent
+
+
+isneg(coeff::T) where {T} = (coeff < zero(T))
+function(coeff::Complex{T}) where {T}
+    real(coeff) < 0 && return true
+    (real(coeff) == 0 & imag(coeff) < 0) && return true
+    return false
+end
+
+function printSign(io::IO, coeff::T, first::Bool) where {T}
+    neg = isneg(coeff)
+    if first
+        neg && print(io, "- ")
+    else
+        neg ? print(io, " - ") : print(io, "+")
+    end
+    # there is a need to change the sign of coeff
+    return -coeff
+end
+
+function printMonomial(io::IO, j)
+    j == 0 && return
+    print(io, "*x")
+    j == 1 || print(io, "^", j)
+end
+
+printCoeff(io::IO, coeff::Number) = print(io, coeff)
+function printCoeff(io::IO, coeff::Complex{T}) where {T}
+    realnz = !iszero(real(coeff))
+    imagnz = !iszero(imag(coeff))
+
+    if realnz & imagnz
+        print(io, "(", coeff, ")")
+    elseif realnz
+        print(io, real(coeff))
+    elseif imagnz
+        print(io, "(", imag(coeff), im, ")")
+    else
+        return
+    end
+end
+
+
+    
+
 function polyPrint(p::Poly{T}) where {T}
     first = true
     for i in degree(p):-1:1  # start from highest exponents
