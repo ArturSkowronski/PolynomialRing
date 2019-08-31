@@ -2,8 +2,7 @@
 ##
 ## Displaying
 
-# import Base: show
-export polyPrint
+import Base: show
 
 
 # how does a monomial look:
@@ -11,9 +10,9 @@ export polyPrint
 
 
 isneg(coeff::T) where {T} = (coeff < zero(T))
-function(coeff::Complex{T}) where {T}
+function isneg(coeff::Complex{T}) where {T}
     real(coeff) < 0 && return true
-    (real(coeff) == 0 & imag(coeff) < 0) && return true
+    (real(coeff) == 0 && imag(coeff) < 0) && return true
     return false
 end
 
@@ -21,153 +20,59 @@ function printSign(io::IO, coeff::T, first::Bool) where {T}
     neg = isneg(coeff)
     if first
         neg && print(io, "- ")
+        first = false
     else
-        neg ? print(io, " - ") : print(io, "+")
+        neg ? print(io, " - ") : print(io, " + ")
+        first = false
     end
     # there is a need to change the sign of coeff
-    return -coeff
+    coeff =  (neg ? -coeff : coeff)
+    return coeff, first
 end
 
 function printMonomial(io::IO, j)
     j == 0 && return
-    print(io, "*x")
+    print(io, " x")
     j == 1 || print(io, "^", j)
 end
 
-printCoeff(io::IO, coeff::Number) = print(io, coeff)
-function printCoeff(io::IO, coeff::Complex{T}) where {T}
+function printCoeff(io::IO, coeff::Number, j)
+    print(io, "(", coeff, ")")
+    printMonomial(io, j)
+end
+
+function printCoeff(io::IO, coeff::Complex{T}, j) where {T}
     realnz = !iszero(real(coeff))
     imagnz = !iszero(imag(coeff))
 
     if realnz & imagnz
         print(io, "(", coeff, ")")
+        printMonomial(io, j)
     elseif realnz
-        print(io, real(coeff))
+        print(io, "(", real(coeff), ")")
+        printMonomial(io, j)
     elseif imagnz
         print(io, "(", imag(coeff), im, ")")
+        printMonomial(io, j)
     else
         return
     end
 end
 
-
-    
-
-function polyPrint(p::Poly{T}) where {T}
+function polyPrint(io::IO, p::Poly{T}) where {T}
     first = true
-    for i in degree(p):-1:1  # start from highest exponents
-        sgn = sign(p[i])  # determine the exponent of the coeff
-        if sgn == +1
-            first || print(" + ")
-            print(p[i])
-            print("x")
-            i==1 || print("^", i)
-            first = false
-        elseif sgn == -1
-            print(" - ")
-            print(abs(p[i]))
-            print("x")
-            i==1 || print("^", i)
-            first = false
+    printed = false
+    for i in degree(p):-1:0
+        if !iszero(p[i])
+            coeff, first = printSign(io, p[i], first)
+            printCoeff(io, coeff, i)
+            printed = true
         end
     end
-
-    sgn = sign(p[0])
-    if sgn == +1
-        first || print(" + ")
-        print(p[0])
-    elseif sgn == -1
-        print(" - ")
-        print(abs(p[0]))
-    else
-        first ? print("0") : nothing
-    end
+    (!printed & first) && printCoeff(io, 0 , 0) 
 end
 
-function polyPrint(p::Poly{T}) where {T<:Complex}
-    first = true
-    for i in degree(p):-1:1
-        ri = reim(p[i])
-        sgnre = sign(ri[1])
-        sgnim = sign(ri[2])
-        if p[i] == 0
-            continue 
-        elseif sgnre == 0
-            if sgnim == +1
-                first || print(" + (")
-                print(ri[2])
-                print("im)x")
-                i==1 || print("^", i)
-                first = false
-            elseif sgnim == -1
-                print(" - (")
-                print(abs(ri[2]))
-                print("im)x")
-                i==1 || print("^", i)
-                first = false
-            end
-        elseif sgnre == +1
-            if sgnim == 0
-                first || print(" + ")
-                print(ri[1])
-                print("x")
-                i==1 || print("^", i)
-                first = false
-            else
-                first || print(" + ")
-                print("(")
-                print(p[i])
-                print(")")
-                print("x")
-                i==1 || print("^", i)
-                first = false
-            end
-        else
-            if sgnim == 0
-                print(" - ")
-                print(abs(ri[1]))
-                print("x")
-                i==1 || print("^", i)
-                first = false
-            else
-                print(" - ")
-                print("(")
-                print(-p[i])
-                print(")")
-                print("x")
-                i==1 || print("^", i)
-                first = false
-            end
-        end
-    end
+show(io::IO, p::Poly{T}) where {T} = polyPrint(io, p) 
 
-    ri = reim(p[0])
-    sgnre = sign(ri[1])
-    sgnim = sign(ri[2])
-    if sgnre == +1
-        if sgnim == 0
-            first || print(" + ")
-            print(ri[1])
-        else
-            first || print(" + ")
-            print("(")
-            print(p[0])
-            print(")")
-        end
-    elseif sgnre == -1
-        if sgnim == 0
-            print(" - ")
-            print(abs(ri[1]))
-        else
-            print(" - ")
-            print("(")
-            print(-p[0])
-            print(")")
-        end
-    else
-        first ? print("0") : nothing
-    end
-    print("\n")
-end
 
 # handle complex polys in different way
