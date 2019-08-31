@@ -4,6 +4,7 @@ module PolyRing
 export Poly
 export peval, roots, degree
 
+import Base: hash, isequal
 import Base: length, zero, one
 import Base: iterate, getindex, firstindex, lastindex
 import Base: ==, +, -, *, /, ^, isapprox
@@ -250,6 +251,9 @@ end
 div(num::Poly, den::Poly) = divrem(num, den)[1]
 rem(num::Poly, den::Poly) = divrem(num, den)[2]
 
+
+hash(p::Poly, h::UInt) = hash(p.coeffs, h)
+isequal(p1::Poly, p2::Poly) = hash(p1) == hash(p2)
 
 # experiments
 include("tmp.jl")

@@ -32,12 +32,12 @@ end
 
 function printMonomial(io::IO, j)
     j == 0 && return
-    print(io, " x")
+    print(io, "x")
     j == 1 || print(io, "^", j)
 end
 
 function printCoeff(io::IO, coeff::Number, j)
-    print(io, "(", coeff, ")")
+    (!isone(coeff) || j==0) && print(io, "(", coeff, ")") 
     printMonomial(io, j)
 end
 
@@ -49,10 +49,10 @@ function printCoeff(io::IO, coeff::Complex{T}, j) where {T}
         print(io, "(", coeff, ")")
         printMonomial(io, j)
     elseif realnz
-        print(io, "(", real(coeff), ")")
+        (!isone(real(coeff)) || j==0) && print(io, "(", real(coeff), ")")
         printMonomial(io, j)
     elseif imagnz
-        print(io, "(", imag(coeff), im, ")")
+        !isone(imag(coeff)) ? print(io, "(", imag(coeff), im, ")") : print(io, "(", im, ")")
         printMonomial(io, j)
     else
         return
