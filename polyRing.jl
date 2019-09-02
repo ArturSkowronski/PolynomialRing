@@ -227,28 +227,29 @@ function divrem(num::Poly{T}, den::Poly{S}) where {T, S}
     end
 
     U = typeof(one(T)/one(S))
+    # U = typeof(div(one(T),one(S)))
     # U = promote_type(T, S)
     # U = Core.Compiler.return_type(div, Tuple{S, T})
     n = length(num)
-    deg = n-d
+    deg = n-d+1
     if deg <0
-        # return Poly([0]), Poly(num.coeffs)
         return Poly{U}([0]), Poly{U}(num.coeffs)
     end
 
-    # out = copy(num.coeffs)
-    out = copy(convert(Vector{U}, num.coeffs))
+    quotient = zeros(U, deg)
+    remainder = copy(convert(Vector{U}, num.coeffs))
     norm = den.coeffs[end]
     for i = n:-1:d
-        out[i] /= norm
-        coef = out[i]
-        if coef != 0
-            for j = 1:d-1
-                out[i-(d-j)] -= den.coeffs[j]*coef
+        quot = remainder[i] / den.coeffs[d]
+        # quot = div(remainder[i], den.coeffs[d])
+        quotient[i-d+1] = quot
+        if quot != 0
+            for j = 1:d
+                remainder[i-(d-j)] -= den.coeffs[j]*quot
             end
         end
     end
-    return Poly(out[d:end]), Poly(out[1:d-1])
+    return Poly(quotient), Poly(remainder)
 end
 
 function divrem(num::Poly{T}, den::Poly{S}) where {T<:Integer, S<:Integer}

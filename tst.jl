@@ -52,6 +52,26 @@ p14 = Poly([1, 2-im, im, -1, -1+im])
     @test divrem4(p10, 1//1*p11) == (Poly([-0.5, 1]), Poly(0))
 end
 
+# @testset "poly divrem" begin
+#     @test divrem5(p1, p0) == (Poly([0,1]), Poly(0))
+#     @test divrem5(p4, p0) == (Poly([1, 1]), Poly(0))
+#     @test divrem5(p8, p0) == (Poly([3,2,6,7,5]), Poly(0))
+#     @test divrem5(p8, 2p0) == (Poly([3/2,2/2,6/2,7/2,5/2]), Poly(0))
+#     @test divrem5(p8, 1.1p0) == (Poly([3/1.1,2/1.1,6/1.1,7/1.1,5/1.1]), Poly(0))
+#     @test divrem5(p8, im*p0) == (Poly([3/im,2/im,6/im,7/im,5/im]), Poly(0))
+#     @test divrem5(p8, 3//1 * p0) == (Poly([3//3,2//3,6//3,7//3,5//3]), Poly(0))
+#     @test divrem5(p6, p1) == (Poly([2,1]), Poly(1))
+#     @test divrem5(p6, p4) == (Poly([1,1]), Poly(0))
+#     @test divrem5(p8, p1) == (Poly([2,6,7,5]), Poly(3))
+#     @test divrem5(p9, p1) == (Poly([2,3]), Poly(1))
+#     @test divrem5(p4, p5) == (Poly(0), Poly([1,1]))
+#     @test_throws DivideError divrem5(p4, p00)
+#     @test divrem5(p6, p7) == (Poly(1), Poly([0,4]))
+#     @test divrem5(p9, p4) == (Poly([-1,3]), Poly(2))
+#     @test divrem5(p10, p11) == (Poly([0, 1]), Poly([1, -1]))
+#     @test divrem5(p10, 1//1*p11) == (Poly([-0.5, 1]), Poly(0))
+# end
+
 # println(pEmpty)
 # println(p00)
 # println(p0)
