@@ -37,7 +37,7 @@ function printMonomial(io::IO, j)
 end
 
 function printCoeff(io::IO, coeff::Number, j)
-    (!isone(coeff) || j==0) && print(io, "(", coeff, ")") 
+    (!isone(coeff) || j==0) && print(io, coeff) 
     printMonomial(io, j)
 end
 
@@ -49,7 +49,7 @@ function printCoeff(io::IO, coeff::Complex{T}, j) where {T}
         print(io, "(", coeff, ")")
         printMonomial(io, j)
     elseif realnz
-        (!isone(real(coeff)) || j==0) && print(io, "(", real(coeff), ")")
+        (!isone(real(coeff)) || j==0) && print(io, real(coeff))
         printMonomial(io, j)
     elseif imagnz
         !isone(imag(coeff)) ? print(io, "(", imag(coeff), im, ")") : print(io, "(", im, ")")

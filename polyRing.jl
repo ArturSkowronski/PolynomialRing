@@ -51,6 +51,9 @@ end
 
 #################################################
 ##
+hash(p::Poly, h::UInt) = hash(p.coeffs, h)
+isequal(p1::Poly, p2::Poly) = hash(p1) == hash(p2)
+
 length(p::Poly) = length(p.coeffs)
 
 zero(p::Poly{T}) where {T} = Poly(T[])  # iszero works now
@@ -248,15 +251,41 @@ function divrem(num::Poly{T}, den::Poly{S}) where {T, S}
     return Poly(out[d:end]), Poly(out[1:d-1])
 end
 
+function divrem(num::Poly{T}, den::Poly{S}) where {T<:Integer, S<:Integer}
+    d = length(den)
+    if d == 1
+        den.coeffs == [0] && throw(DivideError())
+    end
+
+    # U = typeof(one(T)/one(S))
+    U = typeof(div(one(T),one(S)))
+    # U = promote_type(T, S)
+    # U = Core.Compiler.return_type(div, Tuple{S, T})
+    n = length(num)
+    deg = n-d+1
+    if deg <0
+        return Poly{U}([0]), Poly{U}(num.coeffs)
+    end
+
+    quotient = zeros(U, deg)
+    remainder = copy(convert(Vector{U}, num.coeffs))
+    norm = den.coeffs[end]
+    for i = n:-1:d
+        quot = div(remainder[i], den.coeffs[d])
+        quotient[i-d+1] = quot
+        if quot != 0
+            for j = 1:d
+                remainder[i-(d-j)] -= den.coeffs[j]*quot
+            end
+        end
+    end
+    return Poly(quotient), Poly(remainder)
+end
+
 div(num::Poly, den::Poly) = divrem(num, den)[1]
 rem(num::Poly, den::Poly) = divrem(num, den)[2]
 
-
-hash(p::Poly, h::UInt) = hash(p.coeffs, h)
-isequal(p1::Poly, p2::Poly) = hash(p1) == hash(p2)
-
-# experiments
-include("tmp.jl")
+## pretty printing
 include("polyPrint.jl")
 
 end
