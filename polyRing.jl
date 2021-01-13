@@ -52,7 +52,8 @@ end
 #################################################
 ##
 hash(p::Poly, h::UInt) = hash(p.coeffs, h)
-isequal(p1::Poly, p2::Poly) = hash(p1) == hash(p2)
+# isequal(p1::Poly, p2::Poly) = p1.coeffs == p2.coeffs
+
 
 length(p::Poly) = length(p.coeffs)
 
